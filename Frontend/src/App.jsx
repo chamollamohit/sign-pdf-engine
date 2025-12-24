@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import DraggableBox from "./components/DraggableBox";
-
+import axios from "axios";
 import "react-pdf/dist/cjs/Page/AnnotationLayer.css";
 import "react-pdf/dist/cjs/Page/TextLayer.css";
 
@@ -98,11 +98,67 @@ export default function App() {
         );
     };
 
+    // Sign PDF
+    const handleSave = async () => {
+        if (!file) {
+            alert("Please upload a PDF first! 📄");
+            return;
+        }
+
+        // Create FormData
+        const formData = new FormData();
+        // We send the array of fields as a JSON string
+        formData.append("pdfId", "doc_" + Date.now());
+        formData.append("fields", JSON.stringify(fields));
+        formData.append("pdf", file);
+
+        try {
+            // Send to Backend
+            const response = await axios.post(
+                "http://localhost:5000/sign-pdf",
+                formData,
+                { responseType: "blob" }
+            );
+
+            // Create Download Link
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", "signed_document.pdf");
+            document.body.appendChild(link);
+            link.click();
+
+            // Cleanup
+            link.remove();
+            window.URL.revokeObjectURL(url);
+
+            alert("PDF Signed & Downloaded Successfully! 🚀");
+        } catch (error) {
+            console.error("Error signing PDF:", error);
+
+            if (error.response) {
+                alert(
+                    `Server Error: ${error.response.status} - ${error.response.statusText}`
+                );
+            } else if (error.request) {
+                alert("Network Error: Could not connect to backend server.");
+            } else {
+                alert(`Error: ${error.message}`);
+            }
+        }
+    };
+
     return (
         <div className="flex flex-col md:flex-row h-screen font-sans bg-gray-100 text-gray-900 overflow-hidden">
             {/* ---  MOBILE HEADER --- */}
             <div className="md:hidden bg-white p-3  flex justify-between items-center shadow-sm z-20">
                 <span className="font-bold text-gray-600">Sign PDF</span>
+                <button
+                    className="text-xs bg-blue-50 text-gray-600 px-3 py-1 rounded font-medium hover:bg-amber-700"
+                    onClick={handleSave}
+                >
+                    Download PDF
+                </button>
                 <label className="text-xs bg-blue-50 text-gray-600 px-3 py-1 rounded cursor-pointer font-medium">
                     {file ? "Change PDF" : "Upload PDF"}
                     <input
@@ -172,8 +228,11 @@ export default function App() {
                             className="hidden"
                         />
                     </label>
-                    <button className="w-full py-2 bg-amber-600 text-white font-bold rounded hover:bg-amber-700">
-                        Save PDF
+                    <button
+                        className="w-full py-2 bg-amber-600 text-white font-bold rounded hover:bg-amber-700"
+                        onClick={handleSave}
+                    >
+                        Save & Download PDF
                     </button>
                 </div>
             </div>
