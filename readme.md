@@ -8,8 +8,8 @@ Includes a **Security Audit Trail** that hashes documents using SHA-256 and stor
 
 ### 🚀 Deliverables
 
--   **Live Frontend:** []
--   **Live Backend:** []
+-   **Live Frontend:** [https://sign-pdf.mohitchamolla.site/]
+-   **Live Backend:** [https://sign-pdf-engine.onrender.com]
 
 ---
 
