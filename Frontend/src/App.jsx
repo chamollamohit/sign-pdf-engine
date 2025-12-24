@@ -17,7 +17,7 @@ export default function App() {
     const [fields, setFields] = useState([]);
     const [pdfWidth, setPdfWidth] = useState(600);
     const [selectedTool, setSelectedTool] = useState("SIGNATURE");
-
+    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
     const pdfContainerRef = useRef(null);
 
     // Dynamic Width Calculation
@@ -114,11 +114,9 @@ export default function App() {
 
         try {
             // Send to Backend
-            const response = await axios.post(
-                "http://localhost:5000/sign-pdf",
-                formData,
-                { responseType: "blob" }
-            );
+            const response = await axios.post(`${API_URL}/sign-pdf`, formData, {
+                responseType: "blob",
+            });
 
             // Create Download Link
             const url = window.URL.createObjectURL(new Blob([response.data]));

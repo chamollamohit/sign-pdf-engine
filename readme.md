@@ -68,8 +68,9 @@ cd backend
 npm install
 
 # Create a .env file
-echo "PORT=5000" > .env
-echo "MONGO_URI=your_mongodb_connection_string" >> .env
+"PORT = 5000"
+"MONGO_URI = your_mongodb_connection_string"
+"FRONTEND_URL = http://localhost:5173"
 
 # Run Server
 npm run dev
