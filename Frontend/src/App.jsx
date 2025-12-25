@@ -111,7 +111,7 @@ export default function App() {
         formData.append("pdfId", "doc_" + Date.now());
         formData.append("fields", JSON.stringify(fields));
         formData.append("pdf", file);
-
+        console.log(fields);
         try {
             // Send to Backend
             const response = await axios.post(`${API_URL}/sign-pdf`, formData, {

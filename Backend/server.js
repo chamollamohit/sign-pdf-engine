@@ -24,6 +24,15 @@ app.use(cors({
 }));
 app.use(express.json());
 
+app.get('/health', (req, res) => {
+    const healthcheck = {
+        uptime: process.uptime(),
+        message: 'OK',
+        timestamp: Date.now()
+    };
+
+    res.status(200).send(healthcheck);
+})
 app.post('/sign-pdf', upload.single('pdf'), processPDF);
 
 const PORT = process.env.PORT || 5000;
